@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define FONT_WIDTH  8u
-#define FONT_HEIGHT 8u
+#define FONT_WIDTH  5
+#define FONT_HEIGHT 7
 
 extern const uint8_t font[];
 
