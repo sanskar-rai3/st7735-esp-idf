@@ -46,8 +46,17 @@ typedef struct {
  * @brief Initialize st7735 library
  *
  * @param config Hardware configuration for the display
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_init(const ST7735_Config *config);
+
+/**
+ * @brief Fills the entire display with the specified color.
+ *
+ * @param color Color used to fill the display.
+ */
+void st7735_draw_clear(uint16_t color);
 
 /**
  * @brief Draws a single pixel at (x, y)
