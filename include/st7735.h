@@ -54,6 +54,8 @@ esp_err_t st7735_init(const ST7735_Config *config);
  * @brief Fills the entire display with the specified color.
  *
  * @param color Color used to fill the display.
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_clear(uint16_t color);
 
@@ -64,6 +66,8 @@ esp_err_t st7735_draw_clear(uint16_t color);
  * @param y The y coordinate of the screen
  *
  * @param color Color of the pixel
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_pixel(int x, int y, uint16_t color);
 
@@ -77,6 +81,8 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color);
  * @param y2 The y coordinate of the second position
  *
  * @param color Color of the line
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
 
@@ -90,6 +96,8 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
  * @param h Height of the rectangle
  *
  * @param color The color of the rectangle
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
 
@@ -103,6 +111,8 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
  * @param h Height of the rectangle
  *
  * @param color Color of the rectangle
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
 
@@ -115,6 +125,8 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
  * @param r Radius of the circle
  *
  * @param color Color of the Circle
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
 
@@ -127,6 +139,8 @@ esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
  * @param r Radius of the circle
  *
  * @param color Color of the Circle
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_circle_fill(int x, int y, int r, uint16_t color);
 
