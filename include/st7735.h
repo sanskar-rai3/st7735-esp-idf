@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#include "driver/gpio.h"
+#include "driver/spi_master.h"
+
 /**
  * Colors are stored as 16 bit unsigned integers with RGB565 format
  * 
@@ -24,9 +27,26 @@
 #define ST7735_MAGENTA  0xF81Fu
 
 /**
- * @brief Initialize st7735 library
+ * @brief The configuration
  */
-void st7735_init();
+typedef struct {
+    spi_host_device_t host;
+
+    gpio_num_t sclk;
+    gpio_num_t mosi;
+    gpio_num_t cs;
+
+    gpio_num_t dc;
+    gpio_num_t rst;
+    gpio_num_t bl;
+} ST7735_Config;
+
+/**
+ * @brief Initialize st7735 library
+ *
+ * @param config Hardware configuration for the display
+ */
+void st7735_init(const ST7735_Config *config);
 
 /**
  * @brief Draws a single pixel at (x, y)
@@ -36,7 +56,7 @@ void st7735_init();
  *
  * @param color Color of the pixel
  */
-void st7735_drawPixel(int x, int y, uint16_t color);
+void st7735_draw_pixel(int x, int y, uint16_t color);
 
 /**
  * @brief Draws a line from (x1, y1) to (x2, y2)
@@ -49,7 +69,7 @@ void st7735_drawPixel(int x, int y, uint16_t color);
  *
  * @param color Color of the line
  */
-void st7735_drawLine(int x1, int y1, int x2, int y2, uint16_t color);
+void st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
 
 /**
  * @brief Draws a hollow rectangle of size w * h with its top-left vertex at (x, y)
@@ -62,7 +82,7 @@ void st7735_drawLine(int x1, int y1, int x2, int y2, uint16_t color);
  *
  * @param color The color of the rectangle
  */
-void st7735_drawRect(int x, int y, int w, int h, uint16_t color);
+void st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
 
 /**
  * @brief Draws a filled rectangle of size w * h with its top-left vertex at (x, y)
@@ -75,7 +95,7 @@ void st7735_drawRect(int x, int y, int w, int h, uint16_t color);
  *
  * @param color Color of the rectangle
  */
-void st7735_drawRectFill(int x, int y, int w, int h, uint16_t color);
+void st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
 
 /**
  * @brief Draws a hollow circle of radius r with its center at (x, y)
@@ -87,7 +107,7 @@ void st7735_drawRectFill(int x, int y, int w, int h, uint16_t color);
  *
  * @param color Color of the Circle
  */
-void st7735_drawCircle(int x, int y, int r, uint16_t color);
+void st7735_draw_circle(int x, int y, int r, uint16_t color);
 
 /**
  * @brief Draws a filled circle of radius r with its center at (x, y)
@@ -99,6 +119,6 @@ void st7735_drawCircle(int x, int y, int r, uint16_t color);
  *
  * @param color Color of the Circle
  */
-void st7735_drawCircleFill(int x, int y, int r, uint16_t color);
+void st7735_draw_circle_fill(int x, int y, int r, uint16_t color);
 
 #endif /* ST7735_H */
