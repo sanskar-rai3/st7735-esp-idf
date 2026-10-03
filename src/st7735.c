@@ -1,4 +1,5 @@
 #include "st7735.h"
+#include "font.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -423,12 +424,7 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 esp_err_t st7735_draw_clear(uint16_t color) {
     esp_err_t err;
 
-    err = tft_set_window(
-        0,
-        0,
-        ST7735_WIDTH - 1,
-        ST7735_HEIGHT - 1
-    );
+    err = tft_set_window(0, 0, ST7735_WIDTH - 1, ST7735_HEIGHT - 1);
 
     if (err != ESP_OK)
         return err;

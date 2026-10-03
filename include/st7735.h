@@ -62,8 +62,8 @@ esp_err_t st7735_draw_clear(uint16_t color);
 /**
  * @brief Draws a single pixel at (x, y)
  *
- * @param x The x coordinate of the screen
- * @param y The y coordinate of the screen
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
  *
  * @param color Color of the pixel
  *
@@ -74,11 +74,11 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color);
 /**
  * @brief Draws a line from (x1, y1) to (x2, y2)
  *
- * @param x1 The x coordinate of the first position
- * @param y1 The y coordinate of the first position
+ * @param x1 The x-coordinate of the first position
+ * @param y1 The y-coordinate of the first position
  *
- * @param x2 The x coordinate of the second position
- * @param y2 The y coordinate of the second position
+ * @param x2 The x-coordinate of the second position
+ * @param y2 The y-coordinate of the second position
  *
  * @param color Color of the line
  *
@@ -89,8 +89,8 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
 /**
  * @brief Draws a hollow rectangle of size w * h with its top-left vertex at (x, y)
  *
- * @param x The x coordinate of the screen
- * @param y The y coordinate of the screen
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
  *
  * @param w Width of the rectangle
  * @param h Height of the rectangle
@@ -104,8 +104,8 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
 /**
  * @brief Draws a filled rectangle of size w * h with its top-left vertex at (x, y)
  *
- * @param x The x coordinate of the screen
- * @param y The y coordinate of the screen
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
  *
  * @param w Width of the rectangle
  * @param h Height of the rectangle
@@ -119,8 +119,8 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
 /**
  * @brief Draws a hollow circle of radius r with its center at (x, y)
  *
- * @param x The x coordinate of the screen
- * @param y The y coordinate of the screen
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
  *
  * @param r Radius of the circle
  *
@@ -133,8 +133,8 @@ esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
 /**
  * @brief Draws a filled circle of radius r with its center at (x, y)
  *
- * @param x The x coordinate of the screen
- * @param y The y coordinate of the screen
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
  *
  * @param r Radius of the circle
  *
@@ -143,5 +143,37 @@ esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
  * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_draw_circle_fill(int x, int y, int r, uint16_t color);
+
+/**
+ * @brief Draws a character with its top-left corner at (x, y)
+ *
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
+ *
+ * @param c Character to draw
+ *
+ * @param color Color of the char
+ *
+ * @param scale Scale factor of the text
+ *
+ * @return ESP_OK on success, corresponding error code on failure
+ */
+esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale);
+
+/**
+ * @brief Draws text with its top-left corner at (x, y)
+ *
+ * @param x The x-coordinate of the screen
+ * @param y The y-coordinate of the screen
+ *
+ * @param txt Null-terminated string to draw
+ *
+ * @param color Color of the text
+ *
+ * @param scale Scale factor of the text
+ *
+ * @return ESP_OK on success, corresponding error code on failure
+ */
+esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t color, int scale);
 
 #endif /* ST7735_H */
