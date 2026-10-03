@@ -6,6 +6,9 @@
 #include "driver/spi_master.h"
 #include "esp_err.h"
 
+#define ST7735_WIDTH  128
+#define ST7735_HEIGHT 160
+
 /* ST7735 Commands */
 #define ST7735_NOP        0x00u
 #define ST7735_SWRESET    0x01u
@@ -97,8 +100,7 @@ static esp_err_t spi_init(void) {
 static esp_err_t gpio_init(void) {
     gpio_config_t gpio = {
         .pin_bit_mask = (1ULL << g_config.dc)  |
-                        (1ULL << g_config.rst) |
-                        (1ULL << g_config.bl),
+                        (1ULL << g_config.rst),
 
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
@@ -370,8 +372,89 @@ esp_err_t st7735_init(const ST7735_Config *config) {
     if (err != ESP_OK)
         return err;
 
-    /* Turn on backlight */
-    gpio_set_level(g_config.bl, 1);
+    return ESP_OK;
+}
+
+
+static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    esp_err_t err;
+    uint8_t data[4];
+
+    if (x0 > x1 || y0 > y1)
+        return ESP_ERR_INVALID_ARG;
+
+    if (x1 >= ST7735_WIDTH || y1 >= ST7735_HEIGHT)
+        return ESP_ERR_INVALID_ARG;
+
+    /* Set column address */
+    data[0] = x0 >> 8;
+    data[1] = x0 & 0xFF;
+    data[2] = x1 >> 8;
+    data[3] = x1 & 0xFF;
+
+    err = tft_write_command(ST7735_CASET);
+    if (err != ESP_OK)
+        return err;
+
+    err = tft_write_data(data, sizeof(data));
+    if (err != ESP_OK)
+        return err;
+
+    /* Set row address */
+    data[0] = y0 >> 8;
+    data[1] = y0 & 0xFF;
+    data[2] = y1 >> 8;
+    data[3] = y1 & 0xFF;
+
+    err = tft_write_command(ST7735_RASET);
+    if (err != ESP_OK)
+        return err;
+
+    err = tft_write_data(data, sizeof(data));
+    if (err != ESP_OK)
+        return err;
+
+    /* Start writing to display RAM */
+    return tft_write_command(ST7735_RAMWR);
+}
+
+#define ST7735_TRANSFER_PIXELS 256
+
+esp_err_t st7735_draw_clear(uint16_t color) {
+    esp_err_t err;
+
+    err = tft_set_window(
+        0,
+        0,
+        ST7735_WIDTH - 1,
+        ST7735_HEIGHT - 1
+    );
+
+    if (err != ESP_OK)
+        return err;
+
+    uint8_t buffer[ST7735_TRANSFER_PIXELS * 2];
+
+    for (size_t i = 0; i < ST7735_TRANSFER_PIXELS; i++) {
+        buffer[i * 2]     = color >> 8;
+        buffer[i * 2 + 1] = color & 0xFF;
+    }
+
+    size_t remaining = ST7735_WIDTH * ST7735_HEIGHT;
+
+    while (remaining > 0) {
+        size_t pixels = remaining;
+
+        if (pixels > ST7735_TRANSFER_PIXELS)
+            pixels = ST7735_TRANSFER_PIXELS;
+
+        err = tft_write_data(buffer, pixels * 2);
+
+        if (err != ESP_OK)
+            return err;
+
+        remaining -= pixels;
+    }
 
     return ESP_OK;
 }
