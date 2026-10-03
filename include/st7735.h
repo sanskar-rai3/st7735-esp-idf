@@ -5,6 +5,7 @@
 
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
+#include "esp_err.h"
 
 /**
  * Colors are stored as 16 bit unsigned integers with RGB565 format
@@ -27,7 +28,7 @@
 #define ST7735_MAGENTA  0xF81Fu
 
 /**
- * @brief The configuration
+ * @brief The hardware configuration of the display
  */
 typedef struct {
     spi_host_device_t host;
@@ -46,7 +47,7 @@ typedef struct {
  *
  * @param config Hardware configuration for the display
  */
-void st7735_init(const ST7735_Config *config);
+esp_err_t st7735_init(const ST7735_Config *config);
 
 /**
  * @brief Draws a single pixel at (x, y)
