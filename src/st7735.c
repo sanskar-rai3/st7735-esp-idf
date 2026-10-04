@@ -75,11 +75,7 @@ static esp_err_t spi_init(void) {
         .max_transfer_sz = 4096,
     };
 
-    esp_err_t err = spi_bus_initialize(
-        g_config.host,
-        &bus_config,
-        SPI_DMA_CH_AUTO
-    );
+    esp_err_t err = spi_bus_initialize(g_config.host, &bus_config, SPI_DMA_CH_AUTO);
 
     if (err != ESP_OK)
         return err;
@@ -91,11 +87,7 @@ static esp_err_t spi_init(void) {
         .queue_size = 1,
     };
 
-    return spi_bus_add_device(
-        g_config.host,
-        &device_config,
-        &g_spi
-    );
+    return spi_bus_add_device(g_config.host, &device_config, &g_spi);
 }
 
 static esp_err_t gpio_init(void) {
@@ -389,9 +381,10 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 
     /* Set column address */
     data[0] = x0 >> 8;
-    data[1] = x0 & 0xFF;
+    data[1] = x0 &  0xFF;
+
     data[2] = x1 >> 8;
-    data[3] = x1 & 0xFF;
+    data[3] = x1 &  0xFF;
 
     err = tft_write_command(ST7735_CASET);
     if (err != ESP_OK)
@@ -403,9 +396,10 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 
     /* Set row address */
     data[0] = y0 >> 8;
-    data[1] = y0 & 0xFF;
+    data[1] = y0 &  0xFF;
+
     data[2] = y1 >> 8;
-    data[3] = y1 & 0xFF;
+    data[3] = y1 &  0xFF;
 
     err = tft_write_command(ST7735_RASET);
     if (err != ESP_OK)
@@ -425,7 +419,6 @@ esp_err_t st7735_draw_clear(uint16_t color) {
     esp_err_t err;
 
     err = tft_set_window(0, 0, ST7735_WIDTH - 1, ST7735_HEIGHT - 1);
-
     if (err != ESP_OK)
         return err;
 
@@ -433,7 +426,7 @@ esp_err_t st7735_draw_clear(uint16_t color) {
 
     for (size_t i = 0; i < ST7735_TRANSFER_PIXELS; i++) {
         buffer[i * 2]     = color >> 8;
-        buffer[i * 2 + 1] = color & 0xFF;
+        buffer[i * 2 + 1] = color &  0xFF;
     }
 
     size_t remaining = ST7735_WIDTH * ST7735_HEIGHT;
@@ -445,12 +438,30 @@ esp_err_t st7735_draw_clear(uint16_t color) {
             pixels = ST7735_TRANSFER_PIXELS;
 
         err = tft_write_data(buffer, pixels * 2);
-
         if (err != ESP_OK)
             return err;
 
         remaining -= pixels;
     }
 
+    return ESP_OK;
+}
+
+esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
+    esp_err_t err;
+
+    err = tft_set_window(x, y, x, y);
+    if (err != ESP_OK)
+        return err;
+    
+    uint8_t buffer[2] = {
+        color >> 8,
+        color &  0xFF
+    };
+
+    err = tft_write_data(buffer, 2);
+    if (err != ESP_OK)
+        return err;
+    
     return ESP_OK;
 }
