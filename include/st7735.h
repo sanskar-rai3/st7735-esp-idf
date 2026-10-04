@@ -28,6 +28,16 @@
 #define ST7735_MAGENTA  0xF81Fu
 
 /**
+ * @brief Display orientation in degree
+ */
+typedef enum {
+    ST7735_ORIENTATION_0,
+    ST7735_ORIENTATION_90,
+    ST7735_ORIENTATION_180,
+    ST7735_ORIENTATION_270
+} ST7735_Orientation;
+
+/**
  * @brief The hardware configuration of the display
  */
 typedef struct {
@@ -42,13 +52,22 @@ typedef struct {
 } ST7735_Config;
 
 /**
- * @brief Initialize st7735 library
+ * @brief Initializes st7735 library
  *
  * @param config Hardware configuration for the display
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
 esp_err_t st7735_init(const ST7735_Config *config);
+
+/**
+ * @brief Sets the display orientation
+ *
+ * @param orientation Display orientation to set
+ *
+ * @return ESP_OK on sucess, corresponding error code on failure
+ */
+esp_err_t st7735_set_orientation(ST7735_Orientation orientation);
 
 /**
  * @brief Fills the entire display with the specified color.
