@@ -1,6 +1,8 @@
 #include "st7735.h"
 #include "font.h"
 
+#include <string.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
@@ -61,6 +63,9 @@
 
 #define ST7735_GMCTRP1    0xE0u
 #define ST7735_GMCTRN1    0xE1u
+
+#define ST7735_CLAMP(value, min, max) \
+    ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 
 static ST7735_Config g_config;
 static spi_device_handle_t g_spi;
@@ -464,4 +469,46 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
         return err;
     
     return ESP_OK;
+}
+
+esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
+    if (c < 0x20 || c > 0x7E)
+        return ESP_ERR_INVALID_ARG;
+
+    scale = ST7735_CLAMP(scale, 1, FONT_MAX_SCALE);
+
+    const uint8_t *glyph = &font[(c - 0x20) * FONT_HEIGHT];
+
+    const int width  = FONT_WIDTH * scale;
+    const int height = FONT_HEIGHT * scale;
+
+    uint8_t buffer[width * height * 2];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    for (int row = 0; row < FONT_HEIGHT; row++) {
+        for (int col = 0; col < FONT_WIDTH; col++) {
+            if (!(glyph[row] & (1 << (FONT_WIDTH - 1 - col))))
+                continue;
+
+            for (int dy = 0; dy < scale; dy++) {
+                for (int dx = 0; dx < scale; dx++) {
+                    int px = col * scale + dx;
+                    int py = row * scale + dy;
+
+                    size_t index = (py * width + px) * 2;
+
+                    buffer[index]     = color >> 8;
+                    buffer[index + 1] = color & 0xFF;
+                }
+            }
+        }
+    }
+
+    esp_err_t err = tft_set_window(x, y, x + width - 1, y + height - 1);
+
+    if (err != ESP_OK)
+        return err;
+
+    return tft_write_data(buffer, width * height * 2);
 }
