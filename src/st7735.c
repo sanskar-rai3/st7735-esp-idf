@@ -14,7 +14,7 @@
 #define ST7735_HEIGHT 160
 
 /*  Enable debug mode */
-#define ST7735_DEBUG
+// #define ST7735_DEBUG
 
 /* ST7735 Commands */
 #define ST7735_NOP        0x00u
