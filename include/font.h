@@ -5,7 +5,7 @@
 
 #define FONT_WIDTH      5
 #define FONT_HEIGHT     7
-#define FONT_MAX_SCALE  4
+#define FONT_MAX_SCALE  3
 
 extern const uint8_t font[];
 

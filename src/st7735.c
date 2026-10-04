@@ -8,9 +8,13 @@
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "esp_err.h"
+#include "esp_log.h"
 
 #define ST7735_WIDTH  128
 #define ST7735_HEIGHT 160
+
+/*  Enable debug mode */
+#define ST7735_DEBUG
 
 /* ST7735 Commands */
 #define ST7735_NOP        0x00u
@@ -477,6 +481,10 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
 
     scale = ST7735_CLAMP(scale, 1, FONT_MAX_SCALE);
 
+#ifdef ST7735_DEBUG
+    ESP_LOGI("ST7735", "draw_char: c='%c' 0x%02X scale=%d", c, (unsigned char)c, scale);
+#endif
+
     const uint8_t *glyph = &font[(c - 0x20) * FONT_HEIGHT];
 
     const int width  = FONT_WIDTH * scale;
@@ -511,4 +519,32 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
         return err;
 
     return tft_write_data(buffer, width * height * 2);
+}
+
+esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t color, int scale) {
+    if (txt == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    scale = ST7735_CLAMP(scale, 1, FONT_MAX_SCALE);
+
+#ifdef ST7735_DEBUG
+    ESP_LOGI("ST7735", "draw_text: \"%s\" scale=%d", txt, scale);
+#endif
+
+    const int char_width = FONT_WIDTH * scale;
+
+    while (*txt) {
+        if (x + char_width > ST7735_WIDTH)
+            break;
+
+        esp_err_t err = st7735_draw_char(x, y, *txt, color, scale);
+
+        if (err != ESP_OK)
+            return err;
+
+        x += char_width;
+        txt++;
+    }
+
+    return ESP_OK;
 }
