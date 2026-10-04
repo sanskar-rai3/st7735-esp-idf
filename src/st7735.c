@@ -10,9 +10,6 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-#define ST7735_WIDTH  128
-#define ST7735_HEIGHT 160
-
 /*  Enable debug mode */
 // #define ST7735_DEBUG
 
@@ -70,6 +67,9 @@
 
 #define ST7735_CLAMP(value, min, max) \
     ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
+
+static int g_st7735_width  = 128;
+static int g_st7735_height = 160;
 
 static ST7735_Config g_config;
 static spi_device_handle_t g_spi;
@@ -385,7 +385,7 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
     if (x0 > x1 || y0 > y1)
         return ESP_ERR_INVALID_ARG;
 
-    if (x1 >= ST7735_WIDTH || y1 >= ST7735_HEIGHT)
+    if (x1 >= g_st7735_width || y1 >= g_st7735_height)
         return ESP_ERR_INVALID_ARG;
 
     /* Set column address */
@@ -427,7 +427,7 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 esp_err_t st7735_draw_clear(uint16_t color) {
     esp_err_t err;
 
-    err = tft_set_window(0, 0, ST7735_WIDTH - 1, ST7735_HEIGHT - 1);
+    err = tft_set_window(0, 0, g_st7735_width - 1, g_st7735_height - 1);
     if (err != ESP_OK)
         return err;
 
@@ -438,7 +438,7 @@ esp_err_t st7735_draw_clear(uint16_t color) {
         buffer[i * 2 + 1] = color &  0xFF;
     }
 
-    size_t remaining = ST7735_WIDTH * ST7735_HEIGHT;
+    size_t remaining = g_st7735_width * g_st7735_height;
 
     while (remaining > 0) {
         size_t pixels = remaining;
@@ -452,6 +452,54 @@ esp_err_t st7735_draw_clear(uint16_t color) {
 
         remaining -= pixels;
     }
+
+    return ESP_OK;
+}
+
+esp_err_t st7735_set_orientation(ST7735_Orientation orientation) {
+    uint8_t madctl;
+    int width;
+    int height;
+
+    switch (orientation) {
+        case ST7735_ORIENTATION_0:
+            madctl = 0x00;
+            width = 128;
+            height = 160;
+            break;
+
+        case ST7735_ORIENTATION_90:
+            madctl = 0x60;
+            width = 160;
+            height = 128;
+            break;
+
+        case ST7735_ORIENTATION_180:
+            madctl = 0xC0;
+            width = 128;
+            height = 160;
+            break;
+
+        case ST7735_ORIENTATION_270:
+            madctl = 0xA0;
+            width = 160;
+            height = 128;
+            break;
+
+        default:
+            return ESP_ERR_INVALID_ARG;
+    }
+
+    esp_err_t err = tft_write_command(ST7735_MADCTL);
+    if (err != ESP_OK)
+        return err;
+
+    err = tft_write_data(&madctl, 1);
+    if (err != ESP_OK)
+        return err;
+
+    g_st7735_width = width;
+    g_st7735_height = height;
 
     return ESP_OK;
 }
@@ -537,7 +585,7 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uin
     const int char_width = FONT_WIDTH * scale;
 
     while (*txt) {
-        if (x + char_width > ST7735_WIDTH)
+        if (x + char_width > g_st7735_width)
             break;
 
         esp_err_t err = st7735_draw_char(x, y, *txt, fg_color, bg_color, scale);
