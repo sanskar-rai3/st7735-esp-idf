@@ -152,13 +152,14 @@ esp_err_t st7735_draw_circle_fill(int x, int y, int r, uint16_t color);
  *
  * @param c Character to draw
  *
- * @param color Color of the char
+ * @param fg_color Color of the char
+ * @param bg_color Background color of the char
  *
  * @param scale Scale factor of the text
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale);
+esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale);
 
 /**
  * @brief Draws text with its top-left corner at (x, y)
@@ -168,12 +169,13 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale);
  *
  * @param txt Null-terminated string to draw
  *
- * @param color Color of the text
+ * @param fg_color Color of the text
+ * @param bg_color Background color of the text
  *
  * @param scale Scale factor of the text
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t color, int scale);
+esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale);
 
 #endif /* ST7735_H */

@@ -14,7 +14,7 @@
 #define ST7735_HEIGHT 160
 
 /*  Enable debug mode */
-// #define ST7735_DEBUG
+#define ST7735_DEBUG
 
 /* ST7735 Commands */
 #define ST7735_NOP        0x00u
@@ -475,7 +475,7 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
+esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
 
@@ -492,7 +492,10 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
 
     uint8_t buffer[width * height * 2];
 
-    memset(buffer, 0, sizeof(buffer));
+    for (size_t i = 0; i < width * height; i++) {
+        buffer[i * 2]     = bg_color >> 8;
+        buffer[i * 2 + 1] = bg_color & 0xFF;
+    }
 
     for (int row = 0; row < FONT_HEIGHT; row++) {
         for (int col = 0; col < FONT_WIDTH; col++) {
@@ -506,8 +509,8 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
 
                     size_t index = (py * width + px) * 2;
 
-                    buffer[index]     = color >> 8;
-                    buffer[index + 1] = color & 0xFF;
+                    buffer[index]     = fg_color >> 8;
+                    buffer[index + 1] = fg_color & 0xFF;
                 }
             }
         }
@@ -521,7 +524,7 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t color, int scale) {
     return tft_write_data(buffer, width * height * 2);
 }
 
-esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t color, int scale) {
+esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (txt == NULL)
         return ESP_ERR_INVALID_ARG;
 
@@ -537,7 +540,7 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t color, int sc
         if (x + char_width > ST7735_WIDTH)
             break;
 
-        esp_err_t err = st7735_draw_char(x, y, *txt, color, scale);
+        esp_err_t err = st7735_draw_char(x, y, *txt, fg_color, bg_color, scale);
 
         if (err != ESP_OK)
             return err;
