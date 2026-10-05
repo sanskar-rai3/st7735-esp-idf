@@ -564,6 +564,109 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
     return ESP_OK;
 }
 
+esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
+    if (w <= 0 || h <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    int x2 = x + w - 1;
+    int y2 = y + h - 1;
+
+    /* Completely outside */
+    if (x2 < 0 || y2 < 0 ||
+        x >= g_st7735_width || y >= g_st7735_height)
+        return ESP_OK;
+
+    /* Clip */
+    if (x < 0)
+        x = 0;
+
+    if (y < 0)
+        y = 0;
+
+    if (x2 >= g_st7735_width)
+        x2 = g_st7735_width - 1;
+
+    if (y2 >= g_st7735_height)
+        y2 = g_st7735_height - 1;
+
+    esp_err_t err;
+
+    err = st7735_draw_line(x, y, x2, y, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x, y, x, y2, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x2, y, x2, y2, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x, y2, x2, y2, color);
+    if (err != ESP_OK)
+        return err;
+
+    return ESP_OK;
+}
+
+esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
+    if (w <= 0 || h <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    int x2 = x + w - 1;
+    int y2 = y + h - 1;
+
+    /* Completely outside the screen */
+    if (x2 < 0 || y2 < 0 ||
+        x >= g_st7735_width ||
+        y >= g_st7735_height)
+        return ESP_OK;
+
+    /* Clip to screen */
+    if (x < 0)
+        x = 0;
+
+    if (y < 0)
+        y = 0;
+
+    if (x2 >= g_st7735_width)
+        x2 = g_st7735_width - 1;
+
+    if (y2 >= g_st7735_height)
+        y2 = g_st7735_height - 1;
+
+    esp_err_t err = tft_set_window(x, y, x2, y2);
+    if (err != ESP_OK)
+        return err;
+
+    uint8_t buffer[ST7735_TRANSFER_PIXELS * 2];
+
+    for (size_t i = 0; i < ST7735_TRANSFER_PIXELS; i++) {
+        buffer[i * 2]     = color >> 8;
+        buffer[i * 2 + 1] = color & 0xFF;
+    }
+
+    size_t width = x2 - x + 1;
+    size_t height = y2 - y + 1;
+    size_t remaining = width * height;
+
+    while (remaining > 0) {
+        size_t pixels = remaining;
+
+        if (pixels > ST7735_TRANSFER_PIXELS)
+            pixels = ST7735_TRANSFER_PIXELS;
+
+        err = tft_write_data(buffer, pixels * 2);
+        if (err != ESP_OK)
+            return err;
+
+        remaining -= pixels;
+    }
+
+    return ESP_OK;
+}
+
 esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
