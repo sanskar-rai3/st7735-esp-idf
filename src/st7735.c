@@ -564,6 +564,28 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
     return ESP_OK;
 }
 
+esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
+    esp_err_t err;
+
+    err = st7735_draw_line(x, y, x + w - 1, y, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x, y, x, y + h - 1, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x + w - 1, y, x + w - 1, y + h - 1, color);
+    if (err != ESP_OK)
+        return err;
+
+    err = st7735_draw_line(x, y + h - 1, x + w - 1, y + h - 1, color);
+    if (err != ESP_OK)
+        return err;
+
+    return ESP_OK;
+}
+
 esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
