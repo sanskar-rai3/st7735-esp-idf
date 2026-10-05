@@ -565,6 +565,9 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
 }
 
 esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
+    if (w <= 0 || h <= 0)
+        return ESP_ERR_INVALID_ARG;
+
     esp_err_t err;
 
     err = st7735_draw_line(x, y, x + w - 1, y, color);
@@ -582,6 +585,41 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
     err = st7735_draw_line(x, y + h - 1, x + w - 1, y + h - 1, color);
     if (err != ESP_OK)
         return err;
+
+    return ESP_OK;
+}
+
+esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
+    if (w <= 0 || h <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    esp_err_t err;
+
+    err = tft_set_window(x, y, x + w - 1, y + h - 1);
+    if (err != ESP_OK)
+        return err;
+
+    uint8_t buffer[ST7735_TRANSFER_PIXELS * 2];
+
+    for (size_t i = 0; i < ST7735_TRANSFER_PIXELS; i++) {
+        buffer[i * 2]     = color >> 8;
+        buffer[i * 2 + 1] = color & 0xFF;
+    }
+
+    size_t remaining = (size_t)w * h;
+
+    while (remaining > 0) {
+        size_t pixels = remaining;
+
+        if (pixels > ST7735_TRANSFER_PIXELS)
+            pixels = ST7735_TRANSFER_PIXELS;
+
+        err = tft_write_data(buffer, pixels * 2);
+        if (err != ESP_OK)
+            return err;
+
+        remaining -= pixels;
+    }
 
     return ESP_OK;
 }
