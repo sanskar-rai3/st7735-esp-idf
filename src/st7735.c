@@ -1,6 +1,7 @@
 #include "st7735.h"
 #include "font.h"
 
+#include <stddef.h>
 #include <string.h>
 
 #include "freertos/FreeRTOS.h"
@@ -377,7 +378,6 @@ esp_err_t st7735_init(const ST7735_Config *config) {
     return ESP_OK;
 }
 
-
 static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
     esp_err_t err;
     uint8_t data[4];
@@ -454,6 +454,14 @@ esp_err_t st7735_draw_clear(uint16_t color) {
     }
 
     return ESP_OK;
+}
+
+int st7735_get_width(void) {
+    return g_st7735_width;
+}
+
+int st7735_get_height(void) {
+    return g_st7735_height;
 }
 
 esp_err_t st7735_set_orientation(ST7735_Orientation orientation) {

@@ -70,6 +70,20 @@ esp_err_t st7735_init(const ST7735_Config *config);
 esp_err_t st7735_set_orientation(ST7735_Orientation orientation);
 
 /**
+ * @brief Returns the display width
+ *
+ * @return Display width
+ */
+int st7735_get_width(void);
+
+/**
+ * @brief Returns the display height
+ *
+ * @return Display height
+ */
+int st7735_get_height(void);
+
+/**
  * @brief Fills the entire display with the specified color.
  *
  * @param color Color used to fill the display.
