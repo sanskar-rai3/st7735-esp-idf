@@ -568,21 +568,42 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
+    int x2 = x + w - 1;
+    int y2 = y + h - 1;
+
+    /* Completely outside */
+    if (x2 < 0 || y2 < 0 ||
+        x >= g_st7735_width || y >= g_st7735_height)
+        return ESP_OK;
+
+    /* Clip */
+    if (x < 0)
+        x = 0;
+
+    if (y < 0)
+        y = 0;
+
+    if (x2 >= g_st7735_width)
+        x2 = g_st7735_width - 1;
+
+    if (y2 >= g_st7735_height)
+        y2 = g_st7735_height - 1;
+
     esp_err_t err;
 
-    err = st7735_draw_line(x, y, x + w - 1, y, color);
+    err = st7735_draw_line(x, y, x2, y, color);
     if (err != ESP_OK)
         return err;
 
-    err = st7735_draw_line(x, y, x, y + h - 1, color);
+    err = st7735_draw_line(x, y, x, y2, color);
     if (err != ESP_OK)
         return err;
 
-    err = st7735_draw_line(x + w - 1, y, x + w - 1, y + h - 1, color);
+    err = st7735_draw_line(x2, y, x2, y2, color);
     if (err != ESP_OK)
         return err;
 
-    err = st7735_draw_line(x, y + h - 1, x + w - 1, y + h - 1, color);
+    err = st7735_draw_line(x, y2, x2, y2, color);
     if (err != ESP_OK)
         return err;
 
@@ -593,9 +614,29 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
-    esp_err_t err;
+    int x2 = x + w - 1;
+    int y2 = y + h - 1;
 
-    err = tft_set_window(x, y, x + w - 1, y + h - 1);
+    /* Completely outside the screen */
+    if (x2 < 0 || y2 < 0 ||
+        x >= g_st7735_width ||
+        y >= g_st7735_height)
+        return ESP_OK;
+
+    /* Clip to screen */
+    if (x < 0)
+        x = 0;
+
+    if (y < 0)
+        y = 0;
+
+    if (x2 >= g_st7735_width)
+        x2 = g_st7735_width - 1;
+
+    if (y2 >= g_st7735_height)
+        y2 = g_st7735_height - 1;
+
+    esp_err_t err = tft_set_window(x, y, x2, y2);
     if (err != ESP_OK)
         return err;
 
@@ -606,7 +647,9 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
         buffer[i * 2 + 1] = color & 0xFF;
     }
 
-    size_t remaining = (size_t)w * h;
+    size_t width = x2 - x + 1;
+    size_t height = y2 - y + 1;
+    size_t remaining = width * height;
 
     while (remaining > 0) {
         size_t pixels = remaining;
