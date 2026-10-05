@@ -523,6 +523,39 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
     return ESP_OK;
 }
 
+esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
+    int dx = abs(x2 - x1);
+    int sx = x1 < x2 ? 1 : -1;
+
+    int dy = -abs(y2 - y1);
+    int sy = y1 < y2 ? 1 : -1;
+
+    int error = dx + dy;
+
+    while (1) {
+        esp_err_t err = st7735_draw_pixel(x1, y1, color);
+        if (err != ESP_OK)
+            return err;
+
+        if (x1 == x2 && y1 == y2)
+            break;
+
+        int e2 = 2 * error;
+
+        if (e2 >= dy) {
+            error += dy;
+            x1 += sx;
+        }
+
+        if (e2 <= dx) {
+            error += dx;
+            y1 += sy;
+        }
+    }
+
+    return ESP_OK;
+}
+
 esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
