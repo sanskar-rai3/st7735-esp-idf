@@ -84,9 +84,9 @@ int st7735_get_width(void);
 int st7735_get_height(void);
 
 /**
- * @brief Fills the entire display with the specified color.
+ * @brief Fills the entire display with the specified color
  *
- * @param color Color used to fill the display.
+ * @param color Color used to fill the display
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
@@ -210,5 +210,45 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_
  * @return ESP_OK on success, corresponding error code on failure
  */
 esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale);
+
+/**
+ * @brief Sets the rectangular drawing window on the display
+ *
+ * @param x0 The x-coordinate of the top-left corner of the window
+ * @param y0 The y-coordinate of the top-left corner of the window
+ *
+ * @param x1 The x-coordinate of the bottom-right corner of the window
+ * @param y1 The y-coordinate of the top-right corner of the window
+ *
+ * @return ESP_OK on success, corresponding error code on failure
+ */
+esp_err_t st7735_set_window(int x0, int y0, int x1, int y1);
+
+
+/**
+ * @brief Writes pixel data to the current drawing window
+ *
+ * @param pixels Pointer to RGB565 pixel data
+ * @param count Number of pixels to write
+ *
+ * @return ESP_OK on success, corresponding error code on failure
+ */
+esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count);
+
+
+/**
+ * @brief Draws an RGB565 bitmap at the specified position.
+ *
+ * @param x The x-coordinate of the top-left corner
+ * @param y The y-coordinate of the top-left corner
+ *
+ * @param w Width of the bitmap
+ * @param h Height of the bitmap
+ *
+ * @param pixels Pointer to RGB565 pixel data
+ *
+ * @return ESP_OK on success, corresponding error code on failure
+ */
+esp_err_t st7735_draw_bitmap(int x, int y, int w, int h, const uint16_t *pixels);
 
 #endif /* ST7735_H */
