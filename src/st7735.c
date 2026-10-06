@@ -668,15 +668,60 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color) {
-    if (r <= 0)
+esp_err_t st7735_draw_circle(int cx, int cy, int radius, uint16_t color) {
+    if (radius <= 0)
         return ESP_ERR_INVALID_ARG;
 
-    for (float theta = 0; theta < 2.0f * M_PI; theta += 0.01f) {
-        int x = cx + (int)(r * cosf(theta));
-        int y = cy + (int)(r * sinf(theta));
+    int x = radius;
+    int y = 0;
 
-        st7735_draw_pixel(x, y, color);
+    int decision = 1 - radius;
+
+    while (x >= y) {
+
+        esp_err_t err;
+
+        err = st7735_draw_pixel(cx + x, cy + y, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx + y, cy + x, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx - y, cy + x, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx - x, cy + y, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx - x, cy - y, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx - y, cy - x, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx + y, cy - x, color);
+        if (err != ESP_OK)
+            return err;
+
+        err = st7735_draw_pixel(cx + x, cy - y, color);
+        if (err != ESP_OK)
+            return err;
+
+        y++;
+
+        if (decision <= 0) {
+            decision += 2 * y + 1;
+        }
+        else {
+            x--;
+            decision += 2 * (y - x) + 1;
+        }
     }
 
     return ESP_OK;
@@ -687,20 +732,9 @@ esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color) {
         return ESP_ERR_INVALID_ARG;
 
     for (int y = -r; y <= r; y++) {
+        int x = (int)sqrtf((float)(r * r - y * y));
 
-        int x =
-            (int)sqrtf(
-                (float)(r * r - y * y)
-            );
-
-        esp_err_t err = st7735_draw_rect_fill(
-            cx - x,
-            cy + y,
-            2 * x + 1,
-            1,
-            color
-        );
-
+        esp_err_t err = st7735_draw_rect_fill(cx - x, cy + y, 2 * x + 1, 1, color);
         if (err != ESP_OK)
             return err;
     }
