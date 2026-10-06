@@ -682,6 +682,32 @@ esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color) {
     return ESP_OK;
 }
 
+esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color) {
+    if (r <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    for (int y = -r; y <= r; y++) {
+
+        int x =
+            (int)sqrtf(
+                (float)(r * r - y * y)
+            );
+
+        esp_err_t err = st7735_draw_rect_fill(
+            cx - x,
+            cy + y,
+            2 * x + 1,
+            1,
+            color
+        );
+
+        if (err != ESP_OK)
+            return err;
+    }
+
+    return ESP_OK;
+}
+
 esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
