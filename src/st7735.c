@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <math.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -662,6 +663,20 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
             return err;
 
         remaining -= pixels;
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color) {
+    if (r <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    for (float theta = 0; theta < 2.0f * M_PI; theta += 0.01f) {
+        int x = cx + (int)(r * cosf(theta));
+        int y = cy + (int)(r * sinf(theta));
+
+        st7735_draw_pixel(x, y, color);
     }
 
     return ESP_OK;

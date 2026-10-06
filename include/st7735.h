@@ -161,7 +161,7 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
+esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color);
 
 /**
  * @brief Draws a filled circle of radius r with its center at (x, y)
@@ -175,7 +175,7 @@ esp_err_t st7735_draw_circle(int x, int y, int r, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_circle_fill(int x, int y, int r, uint16_t color);
+esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color);
 
 /**
  * @brief Draws a character with its top-left corner at (x, y)
