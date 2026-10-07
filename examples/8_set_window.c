@@ -10,7 +10,8 @@ static const uint16_t pixels[WINDOW_W * WINDOW_H] = {
     ...
 };
 
-void app_main(void) {
+void app_main(void)
+{
     ST7735_Config config = {
         .host = SPI2_HOST,
         .sclk = GPIO_NUM_18,

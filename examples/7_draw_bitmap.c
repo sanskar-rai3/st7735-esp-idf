@@ -12,7 +12,8 @@ static const uint16_t bitmap[BITMAP_W * BITMAP_H] = {
     // use img2bitmap.py to generate bitmap
 };
 
-void app_main(void) {
+void app_main(void)
+{
     ST7735_Config config = {
         .host = SPI2_HOST,
         .sclk = GPIO_NUM_18,

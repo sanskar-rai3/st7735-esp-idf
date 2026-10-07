@@ -76,7 +76,8 @@ static int16_t g_st7735_height = 160;
 static ST7735_Config g_config;
 static spi_device_handle_t g_spi;
 
-static esp_err_t spi_init(void) {
+static esp_err_t spi_init(void)
+{
     spi_bus_config_t bus_config = {
         .mosi_io_num = g_config.mosi,
         .miso_io_num = -1,
@@ -101,7 +102,8 @@ static esp_err_t spi_init(void) {
     return spi_bus_add_device(g_config.host, &device_config, &g_spi);
 }
 
-static esp_err_t gpio_init(void) {
+static esp_err_t gpio_init(void)
+{
     gpio_config_t gpio = {
         .pin_bit_mask = (1ULL << g_config.dc)  |
                         (1ULL << g_config.rst),
@@ -115,7 +117,8 @@ static esp_err_t gpio_init(void) {
     return gpio_config(&gpio);
 }
 
-static void tft_reset(void) {
+static void tft_reset(void)
+{
     gpio_set_level(g_config.rst, 0);
     vTaskDelay(pdMS_TO_TICKS(10));
 
@@ -123,7 +126,8 @@ static void tft_reset(void) {
     vTaskDelay(pdMS_TO_TICKS(120));
 }
 
-static esp_err_t tft_write_command(uint8_t command) {
+static esp_err_t tft_write_command(uint8_t command)
+{
     gpio_set_level(g_config.dc, 0);
 
     spi_transaction_t transaction = {
@@ -134,7 +138,8 @@ static esp_err_t tft_write_command(uint8_t command) {
     return spi_device_transmit(g_spi, &transaction);
 }
 
-static esp_err_t tft_write_data(const uint8_t *data, size_t len) {
+static esp_err_t tft_write_data(const uint8_t *data, size_t len)
+{
     gpio_set_level(g_config.dc, 1);
 
     spi_transaction_t transaction = {
@@ -145,7 +150,8 @@ static esp_err_t tft_write_data(const uint8_t *data, size_t len) {
     return spi_device_transmit(g_spi, &transaction);
 }
 
-static esp_err_t tft_init_sequence(void) {
+static esp_err_t tft_init_sequence(void)
+{
     esp_err_t err;
 
     /* Software reset */
@@ -350,7 +356,8 @@ static esp_err_t tft_init_sequence(void) {
     return ESP_OK;
 }
 
-esp_err_t st7735_init(const ST7735_Config *config) {
+esp_err_t st7735_init(const ST7735_Config *config)
+{
     esp_err_t err;
 
     if (config == NULL)
@@ -379,7 +386,8 @@ esp_err_t st7735_init(const ST7735_Config *config) {
     return ESP_OK;
 }
 
-static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
     esp_err_t err;
     uint8_t data[4];
 
@@ -425,7 +433,8 @@ static esp_err_t tft_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 
 #define ST7735_TRANSFER_PIXELS 256
 
-esp_err_t st7735_draw_clear(uint16_t color) {
+esp_err_t st7735_draw_clear(uint16_t color)
+{
     esp_err_t err;
 
     err = tft_set_window(0, 0, g_st7735_width - 1, g_st7735_height - 1);
@@ -457,15 +466,18 @@ esp_err_t st7735_draw_clear(uint16_t color) {
     return ESP_OK;
 }
 
-int16_t st7735_get_width(void) {
+int16_t st7735_get_width(void)
+{
     return g_st7735_width;
 }
 
-int16_t st7735_get_height(void) {
+int16_t st7735_get_height(void)
+{
     return g_st7735_height;
 }
 
-esp_err_t st7735_set_orientation(ST7735_Orientation orientation) {
+esp_err_t st7735_set_orientation(ST7735_Orientation orientation)
+{
     uint8_t madctl;
     int width;
     int height;
@@ -513,7 +525,8 @@ esp_err_t st7735_set_orientation(ST7735_Orientation orientation) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_pixel(int16_t x, int16_t y, uint16_t color) {
+esp_err_t st7735_draw_pixel(int16_t x, int16_t y, uint16_t color)
+{
     esp_err_t err;
 
     err = tft_set_window(x, y, x, y);
@@ -532,7 +545,8 @@ esp_err_t st7735_draw_pixel(int16_t x, int16_t y, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) {
+esp_err_t st7735_draw_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+{
     int dx = abs(x2 - x1);
     int sx = x1 < x2 ? 1 : -1;
 
@@ -565,7 +579,8 @@ esp_err_t st7735_draw_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint1
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+esp_err_t st7735_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+{
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -611,7 +626,8 @@ esp_err_t st7735_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t 
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_rect_fill(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+esp_err_t st7735_draw_rect_fill(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+{
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -668,7 +684,8 @@ esp_err_t st7735_draw_rect_fill(int16_t x, int16_t y, int16_t w, int16_t h, uint
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_circle(int16_t cx, int16_t cy, int16_t radius, uint16_t color) {
+esp_err_t st7735_draw_circle(int16_t cx, int16_t cy, int16_t radius, uint16_t color)
+{
     if (radius <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -727,7 +744,8 @@ esp_err_t st7735_draw_circle(int16_t cx, int16_t cy, int16_t radius, uint16_t co
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_circle_fill(int16_t cx, int16_t cy, int16_t r, uint16_t color) {
+esp_err_t st7735_draw_circle_fill(int16_t cx, int16_t cy, int16_t r, uint16_t color)
+{
     if (r <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -742,7 +760,8 @@ esp_err_t st7735_draw_circle_fill(int16_t cx, int16_t cy, int16_t r, uint16_t co
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_char(int16_t x, int16_t y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
+esp_err_t st7735_draw_char(int16_t x, int16_t y, char c, uint16_t fg_color, uint16_t bg_color, int scale)
+{
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
 
@@ -791,7 +810,8 @@ esp_err_t st7735_draw_char(int16_t x, int16_t y, char c, uint16_t fg_color, uint
     return tft_write_data(buffer, width * height * 2);
 }
 
-esp_err_t st7735_draw_text(int16_t x, int16_t y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale) {
+esp_err_t st7735_draw_text(int16_t x, int16_t y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale)
+{
     if (txt == NULL)
         return ESP_ERR_INVALID_ARG;
 
@@ -819,11 +839,13 @@ esp_err_t st7735_draw_text(int16_t x, int16_t y, const char *txt, uint16_t fg_co
     return ESP_OK;
 }
 
-esp_err_t st7735_set_window(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
+esp_err_t st7735_set_window(int16_t x0, int16_t y0, int16_t x1, int16_t y1)
+{
     return tft_set_window(x0, y0, x1, y1);
 }
 
-esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count) {
+esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count)
+{
     if (pixels == NULL || count == 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -851,7 +873,8 @@ esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_bitmap(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels) {
+esp_err_t st7735_draw_bitmap(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels)
+{
     if (pixels == NULL)
         return ESP_ERR_INVALID_ARG;
 
