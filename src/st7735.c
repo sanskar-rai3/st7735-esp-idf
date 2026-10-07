@@ -818,3 +818,35 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uin
 
     return ESP_OK;
 }
+
+esp_err_t st7735_set_window(int x0, int y0, int x1, int y1) {
+    return tft_set_window(x0, y0, x1, y1);
+}
+
+esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count) {
+    if (pixels == NULL || count == 0)
+        return ESP_ERR_INVALID_ARG;
+
+    uint8_t buffer[ST7735_TRANSFER_PIXELS * 2];
+
+    while (count > 0) {
+        size_t chunk = count;
+
+        if (chunk > ST7735_TRANSFER_PIXELS)
+            chunk = ST7735_TRANSFER_PIXELS;
+
+        for (size_t i = 0; i < chunk; i++) {
+            buffer[i * 2]     = pixels[i] >> 8;
+            buffer[i * 2 + 1] = pixels[i] & 0xFF;
+        }
+
+        esp_err_t err = tft_write_data(buffer, chunk * 2);
+        if (err != ESP_OK)
+            return err;
+
+        pixels += chunk;
+        count  -= chunk;
+    }
+
+    return ESP_OK;
+}
