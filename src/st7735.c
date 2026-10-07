@@ -850,3 +850,23 @@ esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count) {
 
     return ESP_OK;
 }
+
+esp_err_t st7735_draw_bitmap(int x, int y, int w, int h, const uint16_t *pixels) {
+    if (pixels == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    if (w <= 0 || h <= 0)
+        return ESP_ERR_INVALID_ARG;
+
+    if (x < 0 || y < 0)
+        return ESP_ERR_INVALID_ARG;
+
+    if (x + w > g_st7735_width || y + h > g_st7735_height)
+        return ESP_ERR_INVALID_ARG;
+
+    esp_err_t err = st7735_set_window(x, y, x + w - 1, y + h - 1);
+    if (err != ESP_OK)
+        return err;
+
+    return st7735_write_pixels(pixels, (size_t)w * h);
+}
