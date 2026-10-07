@@ -74,14 +74,14 @@ esp_err_t st7735_set_orientation(ST7735_Orientation orientation);
  *
  * @return Display width
  */
-int st7735_get_width(void);
+int16_t st7735_get_width(void);
 
 /**
  * @brief Returns the display height
  *
  * @return Display height
  */
-int st7735_get_height(void);
+int16_t st7735_get_height(void);
 
 /**
  * @brief Fills the entire display with the specified color
@@ -102,7 +102,7 @@ esp_err_t st7735_draw_clear(uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_pixel(int x, int y, uint16_t color);
+esp_err_t st7735_draw_pixel(int16_t x, int16_t y, uint16_t color);
 
 /**
  * @brief Draws a line from (x1, y1) to (x2, y2)
@@ -117,7 +117,7 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
+esp_err_t st7735_draw_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 
 /**
  * @brief Draws a hollow rectangle of size w * h with its top-left vertex at (x, y)
@@ -132,7 +132,7 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
+esp_err_t st7735_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 
 /**
  * @brief Draws a filled rectangle of size w * h with its top-left vertex at (x, y)
@@ -147,7 +147,7 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
+esp_err_t st7735_draw_rect_fill(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 
 /**
  * @brief Draws a hollow circle of radius r with its center at (x, y)
@@ -161,7 +161,7 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color);
+esp_err_t st7735_draw_circle(int16_t cx, int16_t cy, int16_t r, uint16_t color);
 
 /**
  * @brief Draws a filled circle of radius r with its center at (x, y)
@@ -175,7 +175,7 @@ esp_err_t st7735_draw_circle(int cx, int cy, int r, uint16_t color);
  *
  * @return ESP_OK on sucess, corresponding error code on failure
  */
-esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color);
+esp_err_t st7735_draw_circle_fill(int16_t cx, int16_t cy, int16_t r, uint16_t color);
 
 /**
  * @brief Draws a character with its top-left corner at (x, y)
@@ -192,7 +192,7 @@ esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color);
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale);
+esp_err_t st7735_draw_char(int16_t x, int16_t y, char c, uint16_t fg_color, uint16_t bg_color, int scale);
 
 /**
  * @brief Draws text with its top-left corner at (x, y)
@@ -209,7 +209,7 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale);
+esp_err_t st7735_draw_text(int16_t x, int16_t y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale);
 
 /**
  * @brief Sets the rectangular drawing window on the display
@@ -222,7 +222,7 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uin
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_set_window(int x0, int y0, int x1, int y1);
+esp_err_t st7735_set_window(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 
 
 /**
@@ -249,6 +249,6 @@ esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count);
  *
  * @return ESP_OK on success, corresponding error code on failure
  */
-esp_err_t st7735_draw_bitmap(int x, int y, int w, int h, const uint16_t *pixels);
+esp_err_t st7735_draw_bitmap(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels);
 
 #endif /* ST7735_H */

@@ -70,8 +70,8 @@
 #define ST7735_CLAMP(value, min, max) \
     ((value) < (min) ? (min) : ((value) > (max) ? (max) : (value)))
 
-static int g_st7735_width  = 128;
-static int g_st7735_height = 160;
+static int16_t g_st7735_width  = 128;
+static int16_t g_st7735_height = 160;
 
 static ST7735_Config g_config;
 static spi_device_handle_t g_spi;
@@ -457,11 +457,11 @@ esp_err_t st7735_draw_clear(uint16_t color) {
     return ESP_OK;
 }
 
-int st7735_get_width(void) {
+int16_t st7735_get_width(void) {
     return g_st7735_width;
 }
 
-int st7735_get_height(void) {
+int16_t st7735_get_height(void) {
     return g_st7735_height;
 }
 
@@ -513,7 +513,7 @@ esp_err_t st7735_set_orientation(ST7735_Orientation orientation) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
+esp_err_t st7735_draw_pixel(int16_t x, int16_t y, uint16_t color) {
     esp_err_t err;
 
     err = tft_set_window(x, y, x, y);
@@ -532,7 +532,7 @@ esp_err_t st7735_draw_pixel(int x, int y, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
+esp_err_t st7735_draw_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) {
     int dx = abs(x2 - x1);
     int sx = x1 < x2 ? 1 : -1;
 
@@ -565,7 +565,7 @@ esp_err_t st7735_draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
+esp_err_t st7735_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -611,7 +611,7 @@ esp_err_t st7735_draw_rect(int x, int y, int w, int h, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
+esp_err_t st7735_draw_rect_fill(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
     if (w <= 0 || h <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -668,7 +668,7 @@ esp_err_t st7735_draw_rect_fill(int x, int y, int w, int h, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_circle(int cx, int cy, int radius, uint16_t color) {
+esp_err_t st7735_draw_circle(int16_t cx, int16_t cy, int16_t radius, uint16_t color) {
     if (radius <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -727,7 +727,7 @@ esp_err_t st7735_draw_circle(int cx, int cy, int radius, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color) {
+esp_err_t st7735_draw_circle_fill(int16_t cx, int16_t cy, int16_t r, uint16_t color) {
     if (r <= 0)
         return ESP_ERR_INVALID_ARG;
 
@@ -742,7 +742,7 @@ esp_err_t st7735_draw_circle_fill(int cx, int cy, int r, uint16_t color) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
+esp_err_t st7735_draw_char(int16_t x, int16_t y, char c, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (c < 0x20 || c > 0x7E)
         return ESP_ERR_INVALID_ARG;
 
@@ -791,7 +791,7 @@ esp_err_t st7735_draw_char(int x, int y, char c, uint16_t fg_color, uint16_t bg_
     return tft_write_data(buffer, width * height * 2);
 }
 
-esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale) {
+esp_err_t st7735_draw_text(int16_t x, int16_t y, const char *txt, uint16_t fg_color, uint16_t bg_color, int scale) {
     if (txt == NULL)
         return ESP_ERR_INVALID_ARG;
 
@@ -819,7 +819,7 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uin
     return ESP_OK;
 }
 
-esp_err_t st7735_set_window(int x0, int y0, int x1, int y1) {
+esp_err_t st7735_set_window(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
     return tft_set_window(x0, y0, x1, y1);
 }
 
@@ -851,7 +851,7 @@ esp_err_t st7735_write_pixels(const uint16_t *pixels, size_t count) {
     return ESP_OK;
 }
 
-esp_err_t st7735_draw_bitmap(int x, int y, int w, int h, const uint16_t *pixels) {
+esp_err_t st7735_draw_bitmap(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pixels) {
     if (pixels == NULL)
         return ESP_ERR_INVALID_ARG;
 
