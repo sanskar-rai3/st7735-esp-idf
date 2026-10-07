@@ -812,7 +812,7 @@ esp_err_t st7735_draw_text(int x, int y, const char *txt, uint16_t fg_color, uin
         if (err != ESP_OK)
             return err;
 
-        x += char_width;
+        x += (char_width + 1);
         txt++;
     }
 
