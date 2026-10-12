@@ -5,7 +5,7 @@
 
 #include "st7735.h"
 
-#define BITMAP_W 120
+#define BITMAP_W 128
 #define BITMAP_H 160
 
 static const uint16_t bitmap[BITMAP_W * BITMAP_H] = {
